@@ -8,7 +8,8 @@ fun main(args: Array<String>) {
     // epsilonGreedyExample()
     // annealedEpsilonGreedy()
     // softmaxExample()
-    annealedSoftmaxExample()
+    // annealedSoftmaxExample()
+    ucbAlgorithm()
 }
 
 private fun epsilonGreedyExample() {
@@ -56,4 +57,13 @@ private fun annealedSoftmaxExample() {
     println("Best arm is : " + arms.indexOf(arms.max()))
     val algo = AnnealedSoftmaxAlgorithmBuilder().setArms(arms.size)
     BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/softmax-annealed.tsv").run()
+}
+
+private fun ucbAlgorithm() {
+    val arms = listOf(0.1f, 0.1f, 0.1f, 0.9f).shuffled().toTypedArray()
+    val bernouilliArms = arms.map { BernouilliArm(it) }.toTypedArray()
+
+    println("Best arm is : " + arms.indexOf(arms.max()))
+    val algo = UCBAlgorithmBuilder().setArms(arms.size)
+    BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/ucb.tsv").run()
 }
