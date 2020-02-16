@@ -1,30 +1,18 @@
 package org.rsultan.bandit.algorithms
 
-import java.security.SecureRandom
 import kotlin.math.ln
-import kotlin.math.log10
 
-class AnnealedEpsilonGreedy(nbArms:Int) : BanditAlgorithm {
+class AnnealedEpsilonGreedy(nbArms:Int) : AbstractBanditAlgorithm(nbArms) {
 
-    private val random = SecureRandom()
-    private val counts = (1..nbArms).map { 0 }.toTypedArray()
-    private val values = (1..nbArms).map { 0.0f }.toTypedArray()
-
-    fun maxIndex() = values.indexOf(values.max())
+    private fun maxIndex() = values.indexOf(values.max())
 
     override fun selectArm(): Int {
         val epsilon = 1.0f / (ln(counts.sum() + 0.0f))
         return if (random.nextFloat() > epsilon) maxIndex() else random.nextInt(counts.size)
     }
-
-    override fun update(chosenArm: Int, reward: Float) {
-        val armCount = ++counts[chosenArm]
-        val armValue = values[chosenArm]
-        values[chosenArm] = ((armCount - 1) / armCount.toFloat()) * armValue + (1 / armCount.toFloat()) * reward
-    }
 }
 
-class AnnealedEpsilonGreedyBuilder() : AlgorithmBuilder<AnnealedEpsilonGreedy> {
+class AnnealedEpsilonGreedyBuilder : AlgorithmBuilder<AnnealedEpsilonGreedy> {
 
     private var nbArms: Int = 2
 
