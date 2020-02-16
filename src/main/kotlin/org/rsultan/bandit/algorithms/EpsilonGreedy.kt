@@ -14,7 +14,7 @@ class EpsilonGreedy(private val epsilon: Float, nbArms: Int) : BanditAlgorithm {
         if (nbArms < 2) throw IllegalArgumentException("Must have a least one arm.")
     }
 
-    override fun maxIndex() = values.indexOf(values.max())
+    private fun maxIndex() = values.indexOf(values.max())
     override fun selectArm() = if (random.nextFloat() > epsilon) maxIndex() else random.nextInt(counts.size)
     override fun update(chosenArm: Int, reward: Float) {
         val armCount = ++counts[chosenArm]

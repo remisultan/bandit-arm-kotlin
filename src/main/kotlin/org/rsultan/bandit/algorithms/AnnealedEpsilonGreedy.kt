@@ -10,7 +10,7 @@ class AnnealedEpsilonGreedy(nbArms:Int) : BanditAlgorithm {
     private val counts = (1..nbArms).map { 0 }.toTypedArray()
     private val values = (1..nbArms).map { 0.0f }.toTypedArray()
 
-    override fun maxIndex() = values.indexOf(values.max())
+    fun maxIndex() = values.indexOf(values.max())
 
     override fun selectArm(): Int {
         val epsilon = 1.0f / (ln(counts.sum() + 0.0f))
