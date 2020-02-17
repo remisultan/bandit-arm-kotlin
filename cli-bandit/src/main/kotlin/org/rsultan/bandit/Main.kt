@@ -9,7 +9,7 @@ import com.github.ajalt.clikt.parameters.types.float
 import com.github.ajalt.clikt.parameters.types.int
 import java.lang.IllegalArgumentException
 
-class Main : CliktCommand() {
+class Bandit : CliktCommand() {
 
     companion object {
         const val UCB_ALG = "EpsilonGreedy"
@@ -19,7 +19,7 @@ class Main : CliktCommand() {
 
     private val simulations by option(help = "The Number of simulation you want to run").int().default(5000)
     private val trials by option(help = "The number of trials for a simulation").int().default(250)
-    private val arms by option(help = "The bernoulli probabilities of your arms (multiple values)").float().split(",").required()
+    private val arms by option(help = "The Bernoulli probabilities of your arms (multiple values separated by \",\")").float().split(",").required()
     private val algorithm by option(help = "Algorithm Type. Values : $EPSILON_ALG, $SOFTMAX_ALG, $UCB_ALG").required()
     private val temperature by option("-t", "-e", help = "Threshold of non-annealed algorithms").float().default(0.5f)
     private val annealed by option(help = "Annealed version of algorithm. (only for $EPSILON_ALG, $SOFTMAX_ALG). Cancels temperature").flag()
@@ -53,4 +53,4 @@ class Main : CliktCommand() {
             EpsilonGreedyBuilder().setArms(this.arms.size).setEpsilon(temperature)
 }
 
-fun main(args: Array<String>) = Main().main(args)
+fun main(args: Array<String>) = Bandit().main(args)
