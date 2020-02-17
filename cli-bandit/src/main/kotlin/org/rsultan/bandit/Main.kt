@@ -12,8 +12,8 @@ import java.lang.IllegalArgumentException
 class Bandit : CliktCommand() {
 
     companion object {
-        const val UCB_ALG = "EpsilonGreedy"
-        const val EPSILON_ALG = "UCB"
+        const val UCB_ALG = "UCB"
+        const val EPSILON_ALG = "EpsilonGreedy"
         const val SOFTMAX_ALG = "Softmax"
     }
 
