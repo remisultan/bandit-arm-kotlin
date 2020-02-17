@@ -24,12 +24,13 @@ Options:
   --trials INT       The number of trials for a simulation
   --arms FLOAT       The Bernoulli probabilities of your arms (multiple values
                      separated by ",")
-  --algorithm TEXT   Algorithm Type. Values : UCB, Softmax, EpsilonGreedy
+  --algorithm TEXT   Algorithm Type. Values : EpsilonGreedy, Softmax, UCB
   -t, -e FLOAT       Threshold of non-annealed algorithms
-  --annealed         Annealed version of algorithm. (only for UCB, Softmax).
-                     Cancels temperature
+  --annealed         Annealed version of algorithm. (only for EpsilonGreedy,
+                     Softmax). Cancels temperature
   --file-name TEXT   The output file name
-  -h, --help         Show this message and exit  
+  -h, --help         Show this message and exit
+ 
 ```
 
 ## Analyse the results 
