@@ -3,67 +3,54 @@ package org.rsultan.bandit
 import org.rsultan.bandit.algorithms.*
 import org.rsultan.bandit.arms.BernouilliArm
 import org.rsultan.bandit.runner.BanditRunner
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.float
+import com.github.ajalt.clikt.parameters.types.int
+import java.lang.IllegalArgumentException
 
-fun main(args: Array<String>) {
-    // epsilonGreedyExample()
-    // annealedEpsilonGreedy()
-    // softmaxExample()
-    // annealedSoftmaxExample()
-    ucbAlgorithm()
-}
+class Main : CliktCommand() {
 
-private fun epsilonGreedyExample() {
-    val arms = listOf(0.1f, 0.1f, 0.1f, 0.9f).shuffled().toTypedArray()
-    //val arms = listOf(0.3f, 0.9f).shuffled().toTypedArray()
-    //val arms = (1..2000).map { SecureRandom().nextFloat() }.shuffled().toTypedArray()
-    //val arms = (1..20).map { 0.1f }.shuffled().toTypedArray()
-    //val arms = (1..20).map { 0.1f }.shuffled().toTypedArray()
-    val bernouilliArms = arms.map { BernouilliArm(it) }.toTypedArray()
-
-    println("Best arm is : " + arms.indexOf(arms.max()))
-
-    val epsilsons = arrayOf(0.0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f)
-    epsilsons.forEach { eps ->
-        val algo = EpsilonGreedyBuilder().setEpsilon(eps).setArms(arms.size)
-        BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/epsilson-$eps.tsv").run()
+    companion object {
+        const val UCB_ALG = "EpsilonGreedy"
+        const val EPSILON_ALG = "UCB"
+        const val SOFTMAX_ALG = "Softmax"
     }
-}
 
-private fun annealedEpsilonGreedy() {
-    val arms = listOf(0.1f, 0.1f, 0.1f, 0.9f).shuffled().toTypedArray()
-    val bernouilliArms = arms.map { BernouilliArm(it) }.toTypedArray()
+    private val simulations by option(help = "The Number of simulation you want to run").int().default(5000)
+    private val trials by option(help = "The number of trials for a simulation").int().default(250)
+    private val arms by option(help = "The bernoulli probabilities of your arms (multiple values)").float().split(",").required()
+    private val algorithm by option(help = "Algorithm Type. Values : $EPSILON_ALG, $SOFTMAX_ALG, $UCB_ALG").required()
+    private val temperature by option("-t", "-e", help = "Threshold of non-annealed algorithms").float().default(0.5f)
+    private val annealed by option(help = "Annealed version of algorithm. (only for $EPSILON_ALG, $SOFTMAX_ALG). Cancels temperature").flag()
+    private val fileName by option(help = "The output file name").required()
 
-    println("Best arm is : " + arms.indexOf(arms.max()))
-    val algo = AnnealedEpsilonGreedyBuilder().setArms(arms.size)
-    BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/epsilson-annealed.tsv").run()
-}
+    override fun run() {
+        val shuffledArms = this.arms.shuffled()
+        val arms = shuffledArms.map { BernouilliArm(it) }.toTypedArray()
 
-private fun softmaxExample() {
-    val arms = listOf(0.1f, 0.1f, 0.1f, 0.9f).shuffled().toTypedArray()
-    val bernouilliArms = arms.map { BernouilliArm(it) }.toTypedArray()
-    val temperatures = arrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f)
+        val algorithm: AlgorithmBuilder<out BanditAlgorithm> = when (this.algorithm.toLowerCase()) {
+            EPSILON_ALG.toLowerCase() -> getEpsilonAlgorithm()
+            SOFTMAX_ALG.toLowerCase() -> getSoftmaxAlgorithm()
+            UCB_ALG.toLowerCase() -> UCBAlgorithmBuilder().setArms(this.arms.size)
+            else -> throw IllegalArgumentException("$algorithm not supported")
+        }
 
-    println("Best arm is : " + arms.indexOf(arms.max()))
-    temperatures.forEach { tps ->
-        val algo = SoftmaxAlgorithmBuilder().setTemperature(tps).setArms(arms.size)
-        BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/softmax-$tps.tsv").run()
+        println("Best arm is : " + shuffledArms.indexOf(shuffledArms.max()))
+        BanditRunner(algorithm, arms, simulations, trials, fileName).run()
     }
+
+    private fun getSoftmaxAlgorithm() =
+        if (annealed)
+            AnnealedSoftmaxAlgorithmBuilder().setArms(this.arms.size)
+        else
+            SoftmaxAlgorithmBuilder().setArms(this.arms.size).setTemperature(temperature)
+
+    private fun getEpsilonAlgorithm() =
+        if (annealed)
+            AnnealedEpsilonGreedyBuilder().setArms(this.arms.size)
+        else
+            EpsilonGreedyBuilder().setArms(this.arms.size).setEpsilon(temperature)
 }
 
-private fun annealedSoftmaxExample() {
-    val arms = listOf(0.1f, 0.1f, 0.1f, 0.9f).shuffled().toTypedArray()
-    val bernouilliArms = arms.map { BernouilliArm(it) }.toTypedArray()
-
-    println("Best arm is : " + arms.indexOf(arms.max()))
-    val algo = AnnealedSoftmaxAlgorithmBuilder().setArms(arms.size)
-    BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/softmax-annealed.tsv").run()
-}
-
-private fun ucbAlgorithm() {
-    val arms = listOf(0.1f, 0.1f, 0.1f, 0.9f).shuffled().toTypedArray()
-    val bernouilliArms = arms.map { BernouilliArm(it) }.toTypedArray()
-
-    println("Best arm is : " + arms.indexOf(arms.max()))
-    val algo = UCBAlgorithmBuilder().setArms(arms.size)
-    BanditRunner(algo, bernouilliArms, 5000, 250, "/tmp/ucb.tsv").run()
-}
+fun main(args: Array<String>) = Main().main(args)

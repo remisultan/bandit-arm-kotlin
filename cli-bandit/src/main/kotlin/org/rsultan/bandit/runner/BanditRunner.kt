@@ -6,8 +6,8 @@ import org.rsultan.bandit.arms.BanditArm
 import java.io.File
 import java.util.*
 
-class BanditRunner<ALG : BanditAlgorithm, BLD : AlgorithmBuilder<ALG>, ARM : BanditArm>(
-    private val algorithmBuilder: BLD,
+class BanditRunner<ARM : BanditArm>(
+    private val algorithmBuilder: AlgorithmBuilder<out BanditAlgorithm>,
     private val arms: Array<ARM>,
     private val nbSimulations: Int,
     private val horizon: Int,
