@@ -33,5 +33,3 @@ class BanditRunner<ALG : BanditAlgorithm, BLD : AlgorithmBuilder<ALG>, ARM : Ban
         writer.close()
     }
 }
-
-data class Result(val simulation: Int, val arm: Int, val time: Int, val reward: Float, val cumulativeReward: Float)
