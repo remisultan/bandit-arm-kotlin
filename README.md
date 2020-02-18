@@ -1,6 +1,6 @@
 # Bandit Arms 
 
-An application of the simulations experimented in Bandit Arm Algorithm for Website Optimisation in Kotlin.
+An application of the simulations experimented in Bandit Algorithms for Website Optimisation in Kotlin.
 The E-Book : https://www.amazon.com/Bandit-Algorithms-Website-Optimization-Developing/dp/1449341330
 
 ## Requirements 
