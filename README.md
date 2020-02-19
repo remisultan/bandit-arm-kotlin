@@ -11,6 +11,7 @@ For the project
 For analysis
 - awk
 - gnuplot
+- python / pip/ jupyter kotlin kernel
 
 ## Run
 
@@ -52,3 +53,13 @@ $ awk -F'\t' \
      | sort -n -t'\t' -k1,1 \
      | gnuplot -p -e "set yrange [0:*]; plot '<cat' using 1:2"
 ```
+
+Jupyter notebook
+
+```
+$ pip install kotlin-jupyter-kernel
+$ jupyter notebook
+```
+
+Run some simulations in tsv format and with `cli-bandit.jar` and output the files in  `cli-bandit/target/`
+, open `simulations.ipynb` and play around
