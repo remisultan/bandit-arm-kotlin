@@ -3,7 +3,7 @@ package org.rsultan.bandit.algorithms
 import kotlin.math.ln
 import kotlin.math.sqrt
 
-class UCBAlgorithm(nbArms: Int) : AbstractBanditAlgorithm(nbArms) {
+class UCB(nbArms: Int) : AbstractBanditAlgorithm(nbArms) {
 
     override fun selectArm(): Int {
         val zeroCountArm = counts.indexOfFirst { it == 0 }
@@ -19,15 +19,15 @@ class UCBAlgorithm(nbArms: Int) : AbstractBanditAlgorithm(nbArms) {
     }
 }
 
-class UCBAlgorithmBuilder : AlgorithmBuilder<UCBAlgorithm> {
+class UCBBuilder : AlgorithmBuilder<UCB> {
 
     private var nbArms: Int = 2
 
-    fun setArms(nbArms: Int): UCBAlgorithmBuilder {
+    fun setArms(nbArms: Int): UCBBuilder {
         this.nbArms = nbArms
         return this
     }
 
-    override fun build(): UCBAlgorithm = UCBAlgorithm(nbArms)
+    override fun build(): UCB = UCB(nbArms)
 
 }

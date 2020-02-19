@@ -32,7 +32,7 @@ class Bandit : CliktCommand() {
         val algorithm: AlgorithmBuilder<out BanditAlgorithm> = when (this.algorithm.toLowerCase()) {
             EPSILON_ALG.toLowerCase() -> getEpsilonAlgorithm()
             SOFTMAX_ALG.toLowerCase() -> getSoftmaxAlgorithm()
-            UCB_ALG.toLowerCase() -> UCBAlgorithmBuilder().setArms(this.arms.size)
+            UCB_ALG.toLowerCase() -> UCBBuilder().setArms(this.arms.size)
             else -> throw IllegalArgumentException("$algorithm not supported")
         }
 
@@ -44,7 +44,7 @@ class Bandit : CliktCommand() {
         if (annealed)
             AnnealedSoftmaxAlgorithmBuilder().setArms(this.arms.size)
         else
-            SoftmaxAlgorithmBuilder().setArms(this.arms.size).setTemperature(temperature)
+            SoftmaxBuilder().setArms(this.arms.size).setTemperature(temperature)
 
     private fun getEpsilonAlgorithm() =
         if (annealed)

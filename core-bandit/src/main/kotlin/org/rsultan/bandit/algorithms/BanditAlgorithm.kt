@@ -9,7 +9,7 @@ interface BanditAlgorithm {
     fun update(chosenArm: Int, reward: Float)
 }
 
-abstract class AbstractBanditAlgorithm(nbArms:Int) : BanditAlgorithm {
+abstract class AbstractBanditAlgorithm(nbArms: Int) : BanditAlgorithm {
 
     protected val random = SecureRandom()
     protected val counts = (1..nbArms).map { 0 }.toTypedArray()
@@ -19,6 +19,21 @@ abstract class AbstractBanditAlgorithm(nbArms:Int) : BanditAlgorithm {
         val armCount = ++counts[chosenArm]
         val armValue = values[chosenArm]
         values[chosenArm] = ((armCount - 1) / armCount.toFloat()) * armValue + (1 / armCount.toFloat()) * reward
+    }
+}
+
+abstract class AbstractSoftmaxAlgorithm(nbArms: Int) : AbstractBanditAlgorithm(nbArms) {
+
+    fun categoricalDraw(probabilities: List<Float>): Int {
+        val rand = random.nextFloat()
+        var cumulativeProbability = 0.0f
+        for (i in probabilities.indices) {
+            cumulativeProbability += probabilities[i]
+            if (cumulativeProbability > rand) {
+                return i
+            }
+        }
+        return probabilities.lastIndex
     }
 }
 
